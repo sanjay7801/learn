@@ -1,1 +1,45 @@
+Microsoft Remote Procedure Call, also known as a function call or a subroutine call, is a protocol that uses the client-server model that enables one program to request a service from a program on another computer, without having to understand the details of that computer's network. 
 
+ Default Port   135 & 593 
+
+Penetration testing : 
+      
+  1: Netcat tool : 
+     
+      Using Netcat tools   
+      Command : nc -vn <TARGET_IP> 135 
+                nc -vn <TARGET_IP> 593 
+
+  2: Using Nmap: 
+
+    Nmap has scripts for enumerating MSRPC endpoints 
+
+    Command : nmap -p 135,593 --script=msrpc-enum <TARGET_IP> 
+
+ 3: RPC Client: 
+
+   Window has an embedded tool for interacting with MSRPC called RPC Client 
+
+   Command : rpcclient -U "" -N <TARGET_IP> 
+
+              #empty username (-U "") 
+
+              #no password (-N)  
+
+ After Connecting :  
+
+   > serverinfo 
+   > lsaenumsid 
+   > netshareenumall 
+
+ 4 : MARPC DCOM :  
+
+    MSRPC DCOM is one of the most dangerous services on Windows systems due to the amount of control it can give an attacker. It should be disabled if not needed. MSRPC endpoints can be abused to execute arbitary code on a remote computer. 
+    
+    Command : nmap -p 135 --script=msrpc-dcom-interface-activation <TARGET_IP> 
+
+5 : Identifying Exposed RPC Services : 
+
+   Exposure of RPC services can be determined by querying the RPC locator service and individual endpoints using tools such as rpcdump. 
+
+  Command : rpcdump [-p port] <IP> 
