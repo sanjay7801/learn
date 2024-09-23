@@ -1,1 +1,87 @@
+Network File System (NFS) provides a file sharing solution that lets you transfer files between computers running Windows Server and UNIX operating systems by using the NFS protocol. This article describes the steps you should follow to deploy NFS.
+
+
+Default Port 	2049
+
+
+Connecting to NFS Shares :
+
+	Mounting NFS shares is typically done using the mount command
+	
+	Command :  mount -t nfs X.X.X.X:/path/to/share /mnt/nfs
+	
+	This command mounts the share located at /path/to/share on the server with IP address X.X.X.X to the /mnt/nfs directory.
+	
+	
+Listing NFS Shares : 
+
+	The showmount command can be used to list the shares on a server
+	
+	Command : showmount -e X.X.X.X
+
+Enumeration :
+
+Discovering NFS Shares :
+
+	Tools like Nmap can be used to discover NFS shares on a target host. 
+	
+	Command : nmap -p 2049 X.X.X.X
+	
+Mounting :
+
+	To know which folder has the server available to mount you an ask it using:
+	Command : showmount -e <IP>
+	
+	Then mount it using:
+	Command : mount -t nfs [-o vers=2] <ip>:<remote_folder> <local_folder> -o nolock
+	
+	You should specify to use version 2 because it doesn't have any authentication or authorization.
+	
+Permissions :
+	If you mount a folder which contains files or folders only accesible by some user (by UID). You can create locally a user with that UID and using that user you will be able to access the file/folder.
+
+NSFShell :
+	To easily list, mount and change UID and GID to have access to files you can use nfsshell.
+	
+Useful nmap scripts
+
+	Command : nfs-ls #List NFS exports and check permissions
+
+	          nfs-showmount #Like showmount -e
+
+	          nfs-statfs #Disk statistics and info from NFS share
+	
+Useful metasploit modules :
+
+	Command : scanner/nfs/nfsmount #Scan NFS mounts and list permissions
+
+	
+	
+HackTricks Automatic Commands
+
+
+Protocol_Name: NFS    #Protocol Abbreviation if there is one.
+Port_Number:  2049     #Comma separated if there is more than one.
+Protocol_Description: Network File System         #Protocol Abbreviation Spelled out
+ 
+Entry_1:
+  Name: Notes
+  Description: Notes for NFS
+  Note: |
+    NFS is a system designed for client/server that enables users to seamlessly access files over a network as though these files were located within a local directory. 
+ 
+    #apt install nfs-common
+    showmount 10.10.10.180      ~or~showmount -e 10.10.10.180
+    should show you available shares (example /home)
+ 
+    mount -t nfs -o ver=2 10.10.10.180:/home /mnt/
+    cd /mnt
+    nano into /etc/passwd and change the uid (probably 1000 or 1001) to match the owner of the files if you are not able to get in
+ 
+    https://book.hacktricks.xyz/pentesting/nfs-service-pentesting
+ 
+Entry_2:
+  Name: Nmap
+  Description: Nmap with NFS Scripts
+  Command: nmap --script=nfs-ls.nse,nfs-showmount.nse,nfs-statfs.nse -p 2049 {IP}
 
